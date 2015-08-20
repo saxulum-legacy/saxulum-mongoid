@@ -38,6 +38,11 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($origId->getTimestamp(), $id->getTimestamp());
     }
 
+    public function testMultipleConstruct()
+    {
+        $this->assertNotEquals((string) new MongoId(), (string) new MongoId());
+    }
+
     public function testSerializeAndUnserialize()
     {
         $id = new MongoId(self::SAMPLE_ID);
