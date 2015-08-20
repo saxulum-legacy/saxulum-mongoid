@@ -29,16 +29,26 @@ class MongoId implements \Serializable
             return;
         }
 
+        $this->id = $this->createId();
+    }
+
+    /**
+     * @return string
+     */
+    private function createId()
+    {
         static $counter;
 
         if(null === $counter) {
             $counter = 0;
         }
 
-        $this->id = $this->toHexWithLength(time(), self::HEX_LENGTH_TIMESTAMP);
-        $this->id .= $this->toHexWithLength(crc32(self::getHostname()), self::HEX_LENGTH_HOSTNAME);
-        $this->id .= $this->toHexWithLength(getmypid(), self::HEX_LENGTH_PID);
-        $this->id .= $this->toHexWithLength(++$counter, self::HEX_LENGTH_INCREMENT);
+        $id = $this->toHexWithLength(time(), self::HEX_LENGTH_TIMESTAMP);
+        $id .= $this->toHexWithLength(crc32(self::getHostname()), self::HEX_LENGTH_HOSTNAME);
+        $id .= $this->toHexWithLength(getmypid(), self::HEX_LENGTH_PID);
+        $id .= $this->toHexWithLength(++$counter, self::HEX_LENGTH_INCREMENT);
+
+        return $id;
     }
 
     /**
@@ -46,7 +56,7 @@ class MongoId implements \Serializable
      * @param int $length
      * @return string
      */
-    protected function toHexWithLength($value, $length)
+    private function toHexWithLength($value, $length)
     {
         return substr(str_pad(dechex($value), $length, '0', STR_PAD_LEFT), 0, $length);
     }
