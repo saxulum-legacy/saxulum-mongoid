@@ -7,6 +7,8 @@
 
 ## Features
 
+A php implementation of the \MongoId class to use it within other databases.
+
 ## Requirements
 
  * php: >=5.3
