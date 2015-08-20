@@ -1,0 +1,22 @@
+{
+  "name": "saxulum/saxulum-mongoid",
+  "description": "Saxulum Mongo Id",
+  "keywords": ["saxulum", "mongoid"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dominik Zogg",
+      "email": "dominik.zogg@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
+  "autoload": {
+    "psr-4": { "Saxulum\\MongoId\\": "src/" },
+    "files": [ "src/mongoid-alias.php" ]
+  }
+}
