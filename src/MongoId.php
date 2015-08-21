@@ -99,7 +99,11 @@ class MongoId implements \Serializable
      */
     public static function isValid($value)
     {
-        if(strlen($value) !== 24 || !ctype_xdigit($value)) {
+        if(strlen($value) !== 24) {
+            return false;
+        }
+
+        if(strspn($value, '0123456789abcdefABCDEF') !== 24) {
             return false;
         }
 
