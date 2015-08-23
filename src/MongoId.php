@@ -14,18 +14,23 @@ class MongoId implements \Serializable
     const HEX_LENGTH_PID = 4;
     const HEX_LENGTH_INCREMENT = 6;
 
+    /**
+     * @param MongoId|string|null $id
+     */
     public function __construct($id = null)
     {
-        if($id instanceof self) {
+        if ($id instanceof self) {
             $this->id = $id->id;
+
             return;
         }
 
-        if(null !== $id) {
-            if(!self::isValid($id)) {
+        if (null !== $id) {
+            if (!self::isValid($id)) {
                 throw new \InvalidArgumentException(sprintf('Invalid id: %s', $id));
             }
             $this->id = $id;
+
             return;
         }
 
@@ -39,7 +44,7 @@ class MongoId implements \Serializable
     {
         static $counter;
 
-        if(null === $counter) {
+        if (null === $counter) {
             $counter = 0;
         }
 
@@ -54,6 +59,7 @@ class MongoId implements \Serializable
     /**
      * @param int $value
      * @param int $length
+     *
      * @return string
      */
     private function toHexWithLength($value, $length)
@@ -95,15 +101,16 @@ class MongoId implements \Serializable
 
     /**
      * @param string $value
+     *
      * @return bool
      */
     public static function isValid($value)
     {
-        if(strlen($value) !== 24) {
+        if (strlen($value) !== 24) {
             return false;
         }
 
-        if(strspn($value, '0123456789abcdefABCDEF') !== 24) {
+        if (strspn($value, '0123456789abcdefABCDEF') !== 24) {
             return false;
         }
 
@@ -112,11 +119,12 @@ class MongoId implements \Serializable
 
     /**
      * @param array $props
+     *
      * @return MongoId
      */
     public static function __set_state(array $props)
     {
-        return new static("000000000000000000000000");
+        return new static('000000000000000000000000');
     }
 
     /**
@@ -140,7 +148,7 @@ class MongoId implements \Serializable
      */
     public function unserialize($serialized)
     {
-        if(!self::isValid($serialized)) {
+        if (!self::isValid($serialized)) {
             throw new \InvalidArgumentException(sprintf('Invalid id: %s', $serialized));
         }
         $this->id = $serialized;

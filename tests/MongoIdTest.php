@@ -47,8 +47,8 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
     {
         $id = new MongoId(self::SAMPLE_ID);
 
-        $this->assertEquals('C:23:"Saxulum\MongoId\MongoId":24:{' . self::SAMPLE_ID . '}', serialize($id));
-        $this->assertEquals($id, unserialize('C:23:"Saxulum\MongoId\MongoId":24:{' . self::SAMPLE_ID . '}'));
+        $this->assertEquals('C:23:"Saxulum\MongoId\MongoId":24:{'.self::SAMPLE_ID.'}', serialize($id));
+        $this->assertEquals($id, unserialize('C:23:"Saxulum\MongoId\MongoId":24:{'.self::SAMPLE_ID.'}'));
     }
 
     public function testToString()
