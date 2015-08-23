@@ -18,6 +18,11 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructString()
     {
+        if (!extension_loaded('mongo')) {
+            $this->markTestSkipped('mongo db extension missing');
+            return;
+        }
+
         $id = new MongoId(self::SAMPLE_ID);
         $mongoId = new \MongoId(self::SAMPLE_ID);
 
