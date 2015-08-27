@@ -49,7 +49,7 @@ class MongoId implements \Serializable
 
         $id = $this->toHexWithLength($this->checkMaxIntSize(time(), self::BYTE_MAX_NUMBER_4), 8);
         $id .= $this->toHexWithLength($this->checkMaxIntSize($this->checksum(self::getHostname()), self::BYTE_MAX_NUMBER_3), 6);
-        $id .= $this->toHexWithLength($this->checkMaxIntSize(getmypid(), self::BYTE_MAX_NUMBER_2), 2);
+        $id .= $this->toHexWithLength($this->checkMaxIntSize(getmypid(), self::BYTE_MAX_NUMBER_2), 4);
         $id .= $this->toHexWithLength($this->checkMaxIntSize(++$counter, self::BYTE_MAX_NUMBER_3), 6);
 
         return $id;
