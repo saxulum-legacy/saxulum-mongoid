@@ -87,6 +87,7 @@ class MongoId implements \Serializable
     private function checksum($value)
     {
         $mapping = array(
+            '-' => 20, '_' => 30, '.' => 40,
             'a' => 1000, 'A' => 1050,
             'b' => 1100, 'B' => 1150,
             'c' => 1200, 'C' => 1250,
@@ -119,14 +120,18 @@ class MongoId implements \Serializable
         $length = strlen($value);
         for ($i = 0; $i < $length; ++$i) {
             $sign = $value[$i];
+
             if (is_numeric($sign)) {
                 $checksum += (int) $sign;
-            } else {
-                if (!isset($mapping[$sign])) {
-                    throw new \Exception(sprintf('Can\'t find mapping for char %s', $sign));
-                }
-                $checksum += $mapping[$sign];
+                continue;
             }
+
+            if (!isset($mapping[$sign])) {
+                $checksum += 42;
+
+                continue;
+            }
+            $checksum += $mapping[$sign];
         }
 
         return $checksum;
