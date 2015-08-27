@@ -120,6 +120,9 @@ class MongoId implements \Serializable
             if (is_numeric($sign)) {
                 $checksum += (int) $sign * 10;
             } else {
+                if(!isset($mapping[$sign])) {
+                    throw new \Exception(sprintf('Can\'t find mapping for char %s', $sign));
+                }
                 $checksum += $mapping[$sign];
             }
         }
