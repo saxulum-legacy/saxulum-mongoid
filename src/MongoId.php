@@ -81,36 +81,38 @@ class MongoId implements \Serializable
      * @param string $value
      *
      * @return int
+     *
+     * @throws \Exception
      */
     private function checksum($value)
     {
         $mapping = array(
-            'a' => 1000,
-            'b' => 1100,
-            'c' => 1200,
-            'd' => 1300,
-            'e' => 1400,
-            'f' => 1500,
-            'g' => 1600,
-            'h' => 1700,
-            'i' => 1800,
-            'j' => 1900,
-            'k' => 2000,
-            'l' => 2100,
-            'm' => 2200,
-            'n' => 2300,
-            'o' => 2400,
-            'p' => 2500,
-            'q' => 2600,
-            'r' => 2700,
-            's' => 2800,
-            't' => 2900,
-            'u' => 3000,
-            'v' => 3100,
-            'w' => 3200,
-            'x' => 3300,
-            'y' => 3400,
-            'z' => 3600,
+            'a' => 1000, 'A' => 1050,
+            'b' => 1100, 'B' => 1150,
+            'c' => 1200, 'C' => 1250,
+            'd' => 1300, 'D' => 1350,
+            'e' => 1400, 'E' => 1450,
+            'f' => 1500, 'F' => 1550,
+            'g' => 1600, 'G' => 1650,
+            'h' => 1700, 'H' => 1750,
+            'i' => 1800, 'I' => 1850,
+            'j' => 1900, 'J' => 1950,
+            'k' => 2000, 'K' => 2050,
+            'l' => 2100, 'L' => 2150,
+            'm' => 2200, 'M' => 2250,
+            'n' => 2300, 'N' => 2350,
+            'o' => 2400, 'O' => 2450,
+            'p' => 2500, 'P' => 2550,
+            'q' => 2600, 'Q' => 2650,
+            'r' => 2700, 'R' => 2750,
+            's' => 2800, 'S' => 2850,
+            't' => 2900, 'T' => 2950,
+            'u' => 3000, 'U' => 3050,
+            'v' => 3100, 'V' => 3150,
+            'w' => 3200, 'W' => 3250,
+            'x' => 3300, 'X' => 3350,
+            'y' => 3400, 'Y' => 3450,
+            'z' => 3600, 'Z' => 3650,
         );
 
         $checksum = 0;
@@ -118,9 +120,9 @@ class MongoId implements \Serializable
         for ($i = 0; $i < $length; ++$i) {
             $sign = $value[$i];
             if (is_numeric($sign)) {
-                $checksum += (int) $sign * 10;
+                $checksum += (int) $sign;
             } else {
-                if(!isset($mapping[$sign])) {
+                if (!isset($mapping[$sign])) {
                     throw new \Exception(sprintf('Can\'t find mapping for char %s', $sign));
                 }
                 $checksum += $mapping[$sign];
