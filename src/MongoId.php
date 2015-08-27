@@ -86,51 +86,27 @@ class MongoId implements \Serializable
      */
     private function checksum($value)
     {
+        $sha1 = strtolower(sha1($value));
+
         $mapping = array(
-            '-' => 20, '_' => 30, '.' => 40,
-            'a' => 1000, 'A' => 1050,
-            'b' => 1100, 'B' => 1150,
-            'c' => 1200, 'C' => 1250,
-            'd' => 1300, 'D' => 1350,
-            'e' => 1400, 'E' => 1450,
-            'f' => 1500, 'F' => 1550,
-            'g' => 1600, 'G' => 1650,
-            'h' => 1700, 'H' => 1750,
-            'i' => 1800, 'I' => 1850,
-            'j' => 1900, 'J' => 1950,
-            'k' => 2000, 'K' => 2050,
-            'l' => 2100, 'L' => 2150,
-            'm' => 2200, 'M' => 2250,
-            'n' => 2300, 'N' => 2350,
-            'o' => 2400, 'O' => 2450,
-            'p' => 2500, 'P' => 2550,
-            'q' => 2600, 'Q' => 2650,
-            'r' => 2700, 'R' => 2750,
-            's' => 2800, 'S' => 2850,
-            't' => 2900, 'T' => 2950,
-            'u' => 3000, 'U' => 3050,
-            'v' => 3100, 'V' => 3150,
-            'w' => 3200, 'W' => 3250,
-            'x' => 3300, 'X' => 3350,
-            'y' => 3400, 'Y' => 3450,
-            'z' => 3600, 'Z' => 3650,
+            'a' => 10,
+            'b' => 11,
+            'c' => 12,
+            'd' => 13,
+            'e' => 14,
+            'f' => 15,
         );
 
         $checksum = 0;
-        $length = strlen($value);
+        $length = strlen($sha1);
         for ($i = 0; $i < $length; ++$i) {
-            $sign = $value[$i];
+            $sign = $sha1[$i];
 
             if (is_numeric($sign)) {
                 $checksum += (int) $sign;
                 continue;
             }
 
-            if (!isset($mapping[$sign])) {
-                $checksum += 42;
-
-                continue;
-            }
             $checksum += $mapping[$sign];
         }
 
