@@ -15,6 +15,8 @@ class MongoId implements \Serializable
 
     /**
      * @param MongoId|string|null $id
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($id = null)
     {
@@ -47,10 +49,10 @@ class MongoId implements \Serializable
             $counter = 0;
         }
 
-        $id = $this->toHexWithLength($this->checkMaxIntSize(time(), self::BYTE_MAX_NUMBER_4), 8);
-        $id .= $this->toHexWithLength($this->checkMaxIntSize($this->checksum(self::getHostname()), self::BYTE_MAX_NUMBER_3), 6);
-        $id .= $this->toHexWithLength($this->checkMaxIntSize(getmypid(), self::BYTE_MAX_NUMBER_2), 4);
-        $id .= $this->toHexWithLength($this->checkMaxIntSize(++$counter, self::BYTE_MAX_NUMBER_3), 6);
+        $id = $this->intToMaxLengthHex(time(), 8);
+        $id .= $this->intToMaxLengthHex(crc32(self::getHostname()), 6);
+        $id .= $this->intToMaxLengthHex(getmypid(), 4);
+        $id .= $this->intToMaxLengthHex(++$counter, 6);
 
         return $id;
     }
@@ -61,56 +63,9 @@ class MongoId implements \Serializable
      *
      * @return string
      */
-    private function toHexWithLength($value, $length)
+    private function intToMaxLengthHex($value, $length)
     {
-        return str_pad(dechex($value), $length, '0', STR_PAD_LEFT);
-    }
-
-    /**
-     * @param int$value
-     * @param int $maxInteger
-     *
-     * @return int
-     */
-    private function checkMaxIntSize($value, $maxInteger)
-    {
-        return $value > $maxInteger ? $maxInteger : $value;
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return int
-     *
-     * @throws \Exception
-     */
-    private function checksum($value)
-    {
-        $sha1 = strtolower(sha1($value));
-
-        $mapping = array(
-            'a' => 10,
-            'b' => 11,
-            'c' => 12,
-            'd' => 13,
-            'e' => 14,
-            'f' => 15,
-        );
-
-        $checksum = 0;
-        $length = strlen($sha1);
-        for ($i = 0; $i < $length; ++$i) {
-            $sign = $sha1[$i];
-
-            if (is_numeric($sign)) {
-                $checksum += (int) $sign;
-                continue;
-            }
-
-            $checksum += $mapping[$sign];
-        }
-
-        return $checksum;
+        return str_pad(substr(dechex($value), 0, $length), $length, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -168,11 +123,17 @@ class MongoId implements \Serializable
     /**
      * @param array $props
      *
-     * @return MongoId
+     * @return static
+     *
+     * @throws \InvalidArgumentException
      */
     public static function __set_state(array $props)
     {
-        return new static('000000000000000000000000');
+        if (!isset($props['id'])) {
+            throw new \InvalidArgumentException('There is no id key within props array!');
+        }
+
+        return new static($props['id']);
     }
 
     /**
@@ -193,6 +154,8 @@ class MongoId implements \Serializable
 
     /**
      * @param string $serialized
+     *
+     * @throws \InvalidArgumentException
      */
     public function unserialize($serialized)
     {

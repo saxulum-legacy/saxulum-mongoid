@@ -18,8 +18,9 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
 
     public function testConstructString()
     {
-        if (!extension_loaded('mongo')) {
-            $this->markTestSkipped('mongo db extension missing');
+        if (extension_loaded('mongo')) {
+            $this->markTestSkipped('Mongo extension is loaded, can\'t test alias.');
+
             return;
         }
 
@@ -27,9 +28,7 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
         $mongoId = new \MongoId(self::SAMPLE_ID);
 
         $this->assertEquals($mongoId->getInc(), $id->getInc());
-
-        // todo: find out, why pid get used in a diffrent way within native implementation
-        //$this->assertEquals($mongoId->getPID(), $id->getPID());
+        $this->assertEquals($mongoId->getPID(), $id->getPID());
         $this->assertEquals($mongoId->getTimestamp(), $id->getTimestamp());
     }
 
@@ -48,12 +47,39 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals((string) new MongoId(), (string) new MongoId());
     }
 
+    public function testSetState()
+    {
+        $id = new MongoId(self::SAMPLE_ID);
+
+        $export = var_export($id, true);
+        $exportedId = null;
+        eval('$exportedId = '.$export.';');
+
+        $this->assertEquals($id, $exportedId);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetStateInvalid()
+    {
+        MongoId::__set_state(array());
+    }
+
     public function testSerializeAndUnserialize()
     {
         $id = new MongoId(self::SAMPLE_ID);
 
         $this->assertEquals('C:23:"Saxulum\MongoId\MongoId":24:{'.self::SAMPLE_ID.'}', serialize($id));
         $this->assertEquals($id, unserialize('C:23:"Saxulum\MongoId\MongoId":24:{'.self::SAMPLE_ID.'}'));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testUnserializeWithInvalidData()
+    {
+        unserialize('C:23:"Saxulum\MongoId\MongoId":4:{aaaa}');
     }
 
     public function testToString()
