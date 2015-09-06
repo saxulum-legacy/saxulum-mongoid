@@ -63,7 +63,12 @@ class MongoId implements \Serializable
         }
 
         $inc = shm_get_var($res, 0);
+        if ($inc === 16777215) {
+            $inc = 0;
+        }
+
         ++$inc;
+
         shm_put_var($res, 0, $inc);
 
         return $inc;
