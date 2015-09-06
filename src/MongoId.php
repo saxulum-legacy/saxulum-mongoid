@@ -9,10 +9,6 @@ class MongoId implements \Serializable
      */
     private $id;
 
-    const BYTE_MAX_NUMBER_2 = 65535;
-    const BYTE_MAX_NUMBER_3 = 16777215;
-    const BYTE_MAX_NUMBER_4 = 4294967295;
-
     /**
      * @param MongoId|string|null $id
      *
@@ -43,18 +39,34 @@ class MongoId implements \Serializable
      */
     private function createId()
     {
-        static $counter;
-
-        if (null === $counter) {
-            $counter = 0;
-        }
+        $pid = getmypid();
+        $inc = $this->readInc($pid);
 
         $id = $this->intToMaxLengthHex(time(), 8);
         $id .= $this->intToMaxLengthHex(crc32(self::getHostname()), 6);
-        $id .= $this->intToMaxLengthHex(getmypid(), 4);
-        $id .= $this->intToMaxLengthHex(++$counter, 6);
+        $id .= $this->intToMaxLengthHex($pid, 4);
+        $id .= $this->intToMaxLengthHex($inc, 6);
 
         return $id;
+    }
+
+    /**
+     * @param int $pid
+     *
+     * @return int
+     */
+    private function readInc($pid)
+    {
+        $res = shm_attach($pid);
+        if (!shm_has_var($res, 0)) {
+            shm_put_var($res, 0, 0);
+        }
+
+        $inc = shm_get_var($res, 0);
+        ++$inc;
+        shm_put_var($res, 0, $inc);
+
+        return $inc;
     }
 
     /**
