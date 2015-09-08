@@ -47,6 +47,14 @@ class MongoIdTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals((string) new MongoId(), (string) new MongoId());
     }
 
+    public function testCreateByDateTime()
+    {
+        $dateTime = new \DateTime();
+        $id = MongoId::createByDateTime($dateTime);
+
+        $this->assertEquals($dateTime->format('U'), hexdec(substr($id, 0, 8)));
+    }
+
     public function testSetState()
     {
         $id = new MongoId(self::SAMPLE_ID);

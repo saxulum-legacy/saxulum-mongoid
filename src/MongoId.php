@@ -35,14 +35,30 @@ class MongoId implements \Serializable
     }
 
     /**
+     * @param \DateTime $dateTime
+     *
+     * @return object
+     */
+    public static function createByDateTime(\DateTime $dateTime)
+    {
+        $reflectionClass = new \ReflectionClass(__CLASS__);
+        $object = $reflectionClass->newInstanceWithoutConstructor();
+        $object->id = $object->createId($dateTime->format('U'));
+
+        return $object;
+    }
+
+    /**
+     * @param int|null $time
+     *
      * @return string
      */
-    private function createId()
+    private function createId($time = null)
     {
         $pid = getmypid();
         $inc = $this->readInc($pid);
 
-        $id = $this->intToMaxLengthHex(time(), 8);
+        $id = $this->intToMaxLengthHex(null !== $time ? (int) $time : time(), 8);
         $id .= $this->intToMaxLengthHex(crc32(self::getHostname()), 6);
         $id .= $this->intToMaxLengthHex($pid, 4);
         $id .= $this->intToMaxLengthHex($inc, 6);
