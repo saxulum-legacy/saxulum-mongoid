@@ -41,8 +41,7 @@ class MongoId implements \Serializable
      */
     public static function createByDateTime(\DateTime $dateTime)
     {
-        $reflectionClass = new \ReflectionClass(__CLASS__);
-        $object = $reflectionClass->newInstanceWithoutConstructor();
+        $object = new static;
         $object->id = $object->createId($dateTime->format('U'));
 
         return $object;
