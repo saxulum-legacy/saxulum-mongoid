@@ -18,5 +18,6 @@
   "autoload": {
     "psr-4": { "Saxulum\\MongoId\\": "src/" },
     "files": [ "src/mongoid-alias.php" ]
-  }
+  },
+  "abandoned": true
 }
